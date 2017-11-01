@@ -34,6 +34,11 @@ from .api_profile import setNameAndPhone
 from .prepare import get_credentials
 from .prepare import delete_credentials
 
+try:
+    from urllib.parse import urlparse
+except ImportError:
+     from urlparse import urlparse
+
 # The urllib library was split into other modules from Python 2 to Python 3
 if sys.version_info.major == 3:
     import urllib.parse
@@ -77,9 +82,11 @@ class API(object):
         if (not self.isLoggedIn or force):
             self.session = requests.Session()
             if self.proxy is not None:
+                parsed = urlparse(self.proxy)
+                scheme = 'http://' if not parsed.scheme else ''
                 proxies = {
-                    'http': 'http://' + self.proxy,
-                    'https': 'http://' + self.proxy,
+                    'http': scheme + self.proxy,
+                    'https': scheme + self.proxy,
                 }
                 self.session.proxies.update(proxies)
             if (
@@ -636,24 +643,6 @@ class API(object):
             if "more_available" not in temp or temp["more_available"] is False:
                 return user_feed
             next_max_id = temp["next_max_id"]
-
-    def getTotalHashtagFeed(self, hashtagString, amount=100):
-        hashtag_feed = []
-        next_max_id = ''
-
-        with tqdm(total=amount, desc="Getting hashtag medias", leave=False) as pbar:
-            while True:
-                self.getHashtagFeed(hashtagString, next_max_id)
-                temp = self.LastJson
-                try:
-                    pbar.update(len(temp["items"]))
-                    for item in temp["items"]:
-                        hashtag_feed.append(item)
-                    if len(temp["items"]) == 0 or len(hashtag_feed) >= amount:
-                        return hashtag_feed[:amount]
-                except:
-                    return hashtag_feed[:amount]
-                next_max_id = temp["next_max_id"]
 
     def getTotalSelfUserFeed(self, minTimestamp=None):
         return self.getTotalUserFeed(self.user_id, minTimestamp)
