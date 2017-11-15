@@ -37,7 +37,7 @@ from .prepare import delete_credentials
 try:
     from urllib.parse import urlparse
 except ImportError:
-     from urlparse import urlparse
+    from urlparse import urlparse
 
 # The urllib library was split into other modules from Python 2 to Python 3
 if sys.version_info.major == 3:
