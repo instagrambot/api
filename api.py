@@ -89,10 +89,10 @@ class API(object):
                     'https': scheme + self.proxy,
                 }
                 self.session.proxies.update(proxies)
-            if (
-                    self.SendRequest('si/fetch_headers/?challenge_type=signup&guid=' + self.generateUUID(False),
-                                     None, True)):
 
+            url = 'si/fetch_headers/?challenge_type=signup&guid='
+            url = url + self.generateUUID(False)
+            if self.SendRequest(url, None, True):
                 data = {'phone_id': self.generateUUID(True),
                         '_csrftoken': self.LastResponse.cookies['csrftoken'],
                         'username': self.username,
@@ -101,7 +101,8 @@ class API(object):
                         'password': self.password,
                         'login_attempt_count': '0'}
 
-                if self.SendRequest('accounts/login/', self.generateSignature(json.dumps(data)), True):
+                signature = self.generateSignature(json.dumps(data))
+                if self.SendRequest('accounts/login/', signature, True):
                     self.isLoggedIn = True
                     self.user_id = self.LastJson["logged_in_user"]["pk"]
                     self.rank_token = "%s_%s" % (self.user_id, self.uuid)
@@ -112,7 +113,8 @@ class API(object):
                 else:
                     self.logger.info("Login or password is incorrect.")
                     delete_credentials()
-                    exit()
+                    return False
+        return False
 
     def logout(self):
         if not self.isLoggedIn:
@@ -643,7 +645,7 @@ class API(object):
             if "more_available" not in temp or temp["more_available"] is False:
                 return user_feed
             next_max_id = temp["next_max_id"]
-            
+
     def getTotalHashtagFeed(self, hashtagString, amount=100):
         hashtag_feed = []
         next_max_id = ''
