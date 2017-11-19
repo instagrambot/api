@@ -437,8 +437,22 @@ class API(object):
         })
         return self.SendRequest('media/' + str(mediaId) + '/unlike/', self.generateSignature(data))
 
-    def getMediaComments(self, mediaId):
-        return self.SendRequest('media/' + str(mediaId) + '/comments/?')
+    def getMediaComments(self, mediaId, max_id=None, comments=None):
+        if not comments:
+            comments = []
+
+        url = 'media/' + str(mediaId) + '/comments/?'
+        if max_id:
+            url += "max_id=%s" % max_id
+        self.SendRequest(url)
+        comments += self.LastJson["comments"]
+
+        if self.LastJson["has_more_comments"]:
+            return self.getMediaComments(
+                mediaId, max_id=self.LastJson["next_max_id"],
+                comments=comments)
+
+        return comments
 
     def setNameAndPhone(self, name='', phone=''):
         return setNameAndPhone(self, name, phone)
