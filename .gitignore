@@ -1,0 +1,18 @@
+instabot.log
+# File with login and password
+secret.txt
+
+# Files with downloaded data
+*.csv
+*.tsv
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+*.checkpoint
+.idea/
