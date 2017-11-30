@@ -419,6 +419,9 @@ class API(object):
     def getSelfUserFollowers(self):
         return self.getUserFollowers(self.user_id)
 
+    def getRelationships(self, usernameId):
+        return self.SendRequest('users/' + str(usernameId) + '/relationship/')
+
     def like(self, mediaId):
         data = json.dumps({
             '_uuid': self.uuid,
