@@ -526,21 +526,25 @@ class API(object):
             'action': 'send_item'
         }
         url = ''
-        if itemType == 'message':
+        if itemType == 'links':
+            data['link_text'] = options.get('text')
+            data['link_urls'] = json.dumps(options.get('urls'))
+            url = 'direct_v2/threads/broadcast/link/'
+        elif itemType == 'message':
             data['text'] = options.get('text', '')
             url = 'direct_v2/threads/broadcast/text/'
-        if itemType == 'media_share':
+        elif itemType == 'media_share':
             data['media_type'] = options.get('media_type', 'photo')
             data['text'] = options.get('text', '')
             data['media_id'] = options.get('media_id', '')
             url = 'direct_v2/threads/broadcast/media_share/'
-        if itemType == 'like':
+        elif itemType == 'like':
             url = 'direct_v2/threads/broadcast/like/'
-        if itemType == 'hashtag':
+        elif itemType == 'hashtag':
             url = 'direct_v2/threads/broadcast/hashtag/'
             data['text'] = options.get('text', '')
             data['hashtag'] = options.get('hashtag', '')
-        if itemType == 'profile':
+        elif itemType == 'profile':
             url = 'direct_v2/threads/broadcast/profile/'
             data['profile_user_id'] = options.get('profile_user_id')
             data['text'] = options.get('text', '')
