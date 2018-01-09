@@ -49,6 +49,8 @@ class API(object):
         self.isLoggedIn = False
         self.LastResponse = None
         self.total_requests = 0
+        self._user_id = None
+        self._username = None
 
         # handle logging
         self.logger = logging.getLogger('[instabot]')
@@ -63,6 +65,30 @@ class API(object):
             '%(asctime)s - %(levelname)s - %(message)s')
         ch.setFormatter(formatter)
         self.logger.addHandler(ch)
+    
+    @property
+    def user_id(self):
+        """Return user_id if user is logged in"""
+        if not self._user_id:
+            print("Not logged in!\nUse bot.login()")
+            raise Exception("Not logged in!\nUse bot.login()")
+        return self._user_id
+
+    @user_id.setter
+    def user_id(self, value):
+        self._user_id = value
+    
+    @property
+    def username(self):
+        """Return username if user is logged in"""
+        if not self._username:
+            print("Not logged in!\nUse bot.login()")
+            raise Exception("Not logged in!\nUse bot.login()")
+        return self._username
+
+    @username.setter
+    def username(self, value):
+        self._username = value
 
     def setUser(self, username, password):
         self.username = username
@@ -124,8 +150,8 @@ class API(object):
 
     def SendRequest(self, endpoint, post=None, login=False):
         if (not self.isLoggedIn and not login):
-            self.logger.critical("Not logged in.")
-            raise Exception("Not logged in!")
+            self.logger.critical("Not logged in.\nUse bot.login()")
+            raise Exception("Not logged in!\nUse bot.login()")
 
         self.session.headers.update({'Connection': 'close',
                                      'Accept': '*/*',
