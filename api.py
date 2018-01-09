@@ -57,15 +57,14 @@ class API(object):
         self.logger.setLevel(logging.DEBUG)
         logging.basicConfig(format='%(asctime)s %(message)s',
                             filename='instabot.log',
-                            level=logging.INFO
-                            )
+                            level=logging.INFO)
         ch = logging.StreamHandler()
         ch.setLevel(logging.DEBUG)
         formatter = logging.Formatter(
             '%(asctime)s - %(levelname)s - %(message)s')
         ch.setFormatter(formatter)
         self.logger.addHandler(ch)
-    
+
     @property
     def user_id(self):
         """Return user_id if user is logged in"""
@@ -77,7 +76,7 @@ class API(object):
     @user_id.setter
     def user_id(self, value):
         self._user_id = value
-    
+
     @property
     def username(self):
         """Return username if user is logged in"""
