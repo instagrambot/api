@@ -5,11 +5,31 @@ import copy
 import math
 import subprocess
 import re
+import os
+import shutil
 
 from requests_toolbelt import MultipartEncoder
 
 from . import config
 
+def downloadVideo(self, media_id, filename, media=False, path='videos/'):
+    if not media:
+        self.mediaInfo(media_id)
+        media = self.LastJson['items'][0]
+    filename = '{0}_{1}.mp4'.format(media['user']['username'], media_id) if not filename else '{0}.mp4'.format(filename)
+    #print filename
+    try:
+        clips = media['video_versions']
+    except:
+        return False
+    if os.path.exists(path + filename):
+        return os.path.abspath(path + filename)
+    response = self.session.get(clips[0]['url'], stream=True)
+    if response.status_code == 200:
+        with open(path + filename, 'wb') as f:
+            response.raw.decode_content = True
+            shutil.copyfileobj(response.raw, f)
+        return os.path.abspath(path + filename)
 
 def getVideoInfo(filename):
     res = {}
