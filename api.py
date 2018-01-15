@@ -107,7 +107,7 @@ class API(object):
                     self.rank_token = "%s_%s" % (self.user_id, self.uuid)
                     self.token = self.LastResponse.cookies["csrftoken"]
 
-                    self.logger.info("Login success as %s!" % self.username)
+                    self.logger.info("Login success as %s!", self.username)
                     return True
                 else:
                     self.logger.info("Login or password is incorrect.")
@@ -148,11 +148,11 @@ class API(object):
             self.LastJson = json.loads(response.text)
             return True
         else:
-            self.logger.error("Request return " + str(response.status_code) + " error!")
+            self.logger.error("Request return %s error!", str(response.status_code))
             if response.status_code == 429:
                 sleep_minutes = 5
                 self.logger.warning("That means 'too many requests'. "
-                                    "I'll go to sleep for %d minutes." % sleep_minutes)
+                                    "I'll go to sleep for %d minutes.", sleep_minutes)
                 time.sleep(sleep_minutes * 60)
             elif response.status_code == 400:
                 response_data = json.loads(response.text)
