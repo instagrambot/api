@@ -41,7 +41,7 @@ def get_credentials(username=None):
                 continue
             if ind - 1 in list(range(len(lines))):
                 return lines[ind - 1]
-        except:
+        except Exception:
             print("Wrong input. I need the number of account to use.")
 
 
@@ -59,7 +59,7 @@ def check_secret():
                         os.remove(SECRET_FILE)
                     else:
                         return True
-                except:
+                except Exception:
                     print("Your file is broken. We will delete it "
                           "and try again.")
                     os.remove(SECRET_FILE)

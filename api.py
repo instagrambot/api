@@ -49,45 +49,20 @@ class API(object):
         self.isLoggedIn = False
         self.LastResponse = None
         self.total_requests = 0
-        self._user_id = None
-        self._username = None
 
         # handle logging
         self.logger = logging.getLogger('[instabot]')
         self.logger.setLevel(logging.DEBUG)
         logging.basicConfig(format='%(asctime)s %(message)s',
                             filename='instabot.log',
-                            level=logging.INFO)
+                            level=logging.INFO
+                            )
         ch = logging.StreamHandler()
         ch.setLevel(logging.DEBUG)
         formatter = logging.Formatter(
             '%(asctime)s - %(levelname)s - %(message)s')
         ch.setFormatter(formatter)
         self.logger.addHandler(ch)
-
-    @property
-    def user_id(self):
-        """Return user_id if user is logged in"""
-        if not self._user_id:
-            print("Not logged in!\nUse bot.login()")
-            raise Exception("Not logged in!\nUse bot.login()")
-        return self._user_id
-
-    @user_id.setter
-    def user_id(self, value):
-        self._user_id = value
-
-    @property
-    def username(self):
-        """Return username if user is logged in"""
-        if not self._username:
-            print("Not logged in!\nUse bot.login()")
-            raise Exception("Not logged in!\nUse bot.login()")
-        return self._username
-
-    @username.setter
-    def username(self, value):
-        self._username = value
 
     def setUser(self, username, password):
         self.username = username
@@ -114,10 +89,10 @@ class API(object):
                     'https': scheme + self.proxy,
                 }
                 self.session.proxies.update(proxies)
+            if (
+                    self.SendRequest('si/fetch_headers/?challenge_type=signup&guid=' + self.generateUUID(False),
+                                     None, True)):
 
-            url = 'si/fetch_headers/?challenge_type=signup&guid='
-            url = url + self.generateUUID(False)
-            if self.SendRequest(url, None, True):
                 data = {'phone_id': self.generateUUID(True),
                         '_csrftoken': self.LastResponse.cookies['csrftoken'],
                         'username': self.username,
@@ -126,8 +101,7 @@ class API(object):
                         'password': self.password,
                         'login_attempt_count': '0'}
 
-                signature = self.generateSignature(json.dumps(data))
-                if self.SendRequest('accounts/login/', signature, True):
+                if self.SendRequest('accounts/login/', self.generateSignature(json.dumps(data)), True):
                     self.isLoggedIn = True
                     self.user_id = self.LastJson["logged_in_user"]["pk"]
                     self.rank_token = "%s_%s" % (self.user_id, self.uuid)
@@ -138,8 +112,7 @@ class API(object):
                 else:
                     self.logger.info("Login or password is incorrect.")
                     delete_credentials()
-                    return False
-        return False
+                    exit()
 
     def logout(self):
         if not self.isLoggedIn:
@@ -149,8 +122,8 @@ class API(object):
 
     def SendRequest(self, endpoint, post=None, login=False):
         if (not self.isLoggedIn and not login):
-            self.logger.critical("Not logged in.\nUse bot.login()")
-            raise Exception("Not logged in!\nUse bot.login()")
+            self.logger.critical("Not logged in.")
+            raise Exception("Not logged in!")
 
         self.session.headers.update({'Connection': 'close',
                                      'Accept': '*/*',
@@ -191,7 +164,7 @@ class API(object):
             try:
                 self.LastResponse = response
                 self.LastJson = json.loads(response.text)
-            except:
+            except Exception:
                 pass
             return False
 
@@ -444,9 +417,6 @@ class API(object):
     def getSelfUserFollowers(self):
         return self.getUserFollowers(self.user_id)
 
-    def getRelationships(self, usernameId):
-        return self.SendRequest('users/' + str(usernameId) + '/relationship/')
-
     def like(self, mediaId):
         data = json.dumps({
             '_uuid': self.uuid,
@@ -465,22 +435,8 @@ class API(object):
         })
         return self.SendRequest('media/' + str(mediaId) + '/unlike/', self.generateSignature(data))
 
-    def getMediaComments(self, mediaId, max_id=None, comments=None):
-        if not comments:
-            comments = []
-
-        url = 'media/' + str(mediaId) + '/comments/?'
-        if max_id:
-            url += "max_id=%s" % max_id
-        self.SendRequest(url)
-        comments += self.LastJson["comments"]
-
-        if self.LastJson["has_more_comments"]:
-            return self.getMediaComments(
-                mediaId, max_id=self.LastJson["next_max_id"],
-                comments=comments)
-
-        return comments
+    def getMediaComments(self, mediaId):
+        return self.SendRequest('media/' + str(mediaId) + '/comments/?')
 
     def setNameAndPhone(self, name='', phone=''):
         return setNameAndPhone(self, name, phone)
@@ -636,7 +592,7 @@ class API(object):
                             sleep_track = 0
                     if len(temp["users"]) == 0 or len(followers) >= total_followers:
                         return followers[:total_followers]
-                except:
+                except Exception:
                     return followers[:total_followers]
                 if temp["big_list"] is False:
                     return followers[:total_followers]
@@ -672,7 +628,7 @@ class API(object):
                             sleep_track = 0
                     if len(temp["users"]) == 0 or len(following) >= total_following:
                         return following[:total_following]
-                except:
+                except Exception:
                     return following[:total_following]
                 if temp["big_list"] is False:
                     return following[:total_following]
@@ -706,7 +662,7 @@ class API(object):
                         hashtag_feed.append(item)
                     if len(temp["items"]) == 0 or len(hashtag_feed) >= amount:
                         return hashtag_feed[:amount]
-                except:
+                except Exception:
                     return hashtag_feed[:amount]
                 next_max_id = temp["next_max_id"]
 
