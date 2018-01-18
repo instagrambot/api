@@ -40,7 +40,7 @@ except ImportError:
     from urlparse import urlparse
 
 # The urllib library was split into other modules from Python 2 to Python 3
-if sys.version_info.major == 3:
+if sys.version_info > (3,):
     import urllib.parse
 
 
