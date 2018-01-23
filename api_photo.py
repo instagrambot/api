@@ -15,6 +15,8 @@ def downloadPhoto(self, media_id, filename, media=False, path='photos/'):
         self.mediaInfo(media_id)
         media = self.LastJson['items'][0]
     filename = '{0}_{1}.jpg'.format(media['user']['username'], media_id) if not filename else '{0}.jpg'.format(filename)
+    if media['media_type'] != 1:
+        return
     images = media['image_versions2']['candidates']
     if os.path.exists(path + filename):
         return os.path.abspath(path + filename)
