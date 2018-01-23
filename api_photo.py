@@ -13,6 +13,8 @@ from . import config
 def downloadPhoto(self, media_id, filename, media=False, path='photos/'):
     if not media:
         self.mediaInfo(media_id)
+        if not self.LastJson.get('items'):
+            return True
         media = self.LastJson['items'][0]
     filename = '{0}_{1}.jpg'.format(media['user']['username'], media_id) if not filename else '{0}.jpg'.format(filename)
     if media['media_type'] != 1:
