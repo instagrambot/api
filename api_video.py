@@ -12,6 +12,7 @@ from requests_toolbelt import MultipartEncoder
 
 from . import config
 
+
 def downloadVideo(self, media_id, filename, media=False, path='videos/'):
     if not media:
         self.mediaInfo(media_id)
@@ -29,6 +30,7 @@ def downloadVideo(self, media_id, filename, media=False, path='videos/'):
             response.raw.decode_content = True
             shutil.copyfileobj(response.raw, f)
         return os.path.abspath(path + filename)
+
 
 def getVideoInfo(filename):
     res = {}
