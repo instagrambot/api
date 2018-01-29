@@ -14,6 +14,7 @@ from . import config
 from .api_photo import configurePhoto
 from .api_photo import uploadPhoto
 from .api_photo import downloadPhoto
+from .api_video import downloadVideo
 
 from .api_video import configureVideo
 from .api_video import uploadVideo
@@ -210,6 +211,9 @@ class API(object):
     def uploadVideo(self, photo, caption=None, upload_id=None):
         return uploadVideo(self, photo, caption, upload_id)
 
+    def downloadVideo(self, media_id, filename, media=False, path='video/'):
+        return downloadVideo(self, media_id, filename, media, path)
+    
     def configureVideo(self, upload_id, video, thumbnail, caption=''):
         return configureVideo(self, upload_id, video, thumbnail, caption)
 
