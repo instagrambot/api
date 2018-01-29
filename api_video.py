@@ -17,10 +17,9 @@ def downloadVideo(self, media_id, filename, media=False, path='videos/'):
         self.mediaInfo(media_id)
         media = self.LastJson['items'][0]
     filename = '{0}_{1}.mp4'.format(media['user']['username'], media_id) if not filename else '{0}.mp4'.format(filename)
-    #print filename
     try:
         clips = media['video_versions']
-    except:
+    except Exception:
         return False
     if os.path.exists(path + filename):
         return os.path.abspath(path + filename)
