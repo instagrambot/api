@@ -213,7 +213,7 @@ class API(object):
 
     def downloadVideo(self, media_id, filename, media=False, path='video/'):
         return downloadVideo(self, media_id, filename, media, path)
-    
+
     def configureVideo(self, upload_id, video, thumbnail, caption=''):
         return configureVideo(self, upload_id, video, thumbnail, caption)
 
