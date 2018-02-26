@@ -552,6 +552,14 @@ class API(object):
         if recipients.get('thread'):
             data['thread_ids'] = recipients.get('thread')
         return self.SendRequest(url, data)
+        
+    def leaveThread(self, threadId):
+        data = json.dumps({
+            '_uuid': self.uuid,
+            '_uid': self.user_id,
+            '_csrftoken': self.token
+        })
+        return self.SendRequest('direct_v2/threads/' + threadId + '/leave/', self.generateSignature(data))
 
     def generateSignature(self, data):
         try:
