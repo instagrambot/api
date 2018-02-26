@@ -493,6 +493,18 @@ class API(object):
         })
         return self.SendRequest('friendships/show/' + str(userId) + '/', self.generateSignature(data))
 
+    def getPendingFriendships(self):
+        return self.SendRequest('friendships/pending/')
+
+    def approveFriendship(self, userId):
+        data = json.dumps({
+            '_uuid': self.uuid,
+            '_uid': self.user_id,
+            'user_id': userId,
+            '_csrftoken': self.token
+        })
+        return self.SendRequest('friendships/approve/' + str(userId) + '/', self.generateSignature(data))
+
     def _prepareRecipients(self, users, threadId=None, useQuotes=False):
         if not isinstance(users, list):
             print('Users must be an list')
