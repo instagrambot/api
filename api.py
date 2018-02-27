@@ -552,7 +552,7 @@ class API(object):
         if recipients.get('thread'):
             data['thread_ids'] = recipients.get('thread')
         return self.SendRequest(url, data)
-        
+
     def leaveThread(self, threadId):
         data = json.dumps({
             '_uuid': self.uuid,
